@@ -1,5 +1,4 @@
 apps:
   - name: example-ble-advertise
     selects:
-      - ble
       - ble-peripheral

@@ -1110,6 +1110,10 @@ modules:
         FEATURES:
           - ariel-os/ble-central
 
+  - name: has_ble
+    #selects:
+      #- doc-only
+
   - name: usb
     selects:
       - hw/usb-device-port

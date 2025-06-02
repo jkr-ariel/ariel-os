@@ -46,6 +46,10 @@ pub mod storage;
 #[doc(hidden)]
 pub mod usb;
 
+#[cfg(feature = "ble")]
+#[doc(hidden)]
+pub mod ble;
+
 #[doc(hidden)]
 pub use embassy_rp::OptionalPeripherals;
 
