@@ -1117,6 +1117,10 @@ modules:
         FEATURES:
           - ariel-os/ble-central
 
+  - name: has_ble
+    selects:
+      - doc-only
+
   - name: usb
     selects:
       - hw/usb-device-port
@@ -1595,6 +1599,7 @@ builders:
     provides:
       - has_usb_device_port
       - has_wifi_cyw43
+      - has_ble
 
   - name: rpi-pico2
     parent: rp235xa
@@ -1606,6 +1611,7 @@ builders:
     provides:
       - has_usb_device_port
       - has_wifi_cyw43
+      - has_ble
 
   - name: ai-c3
     parent: esp-c3-01m

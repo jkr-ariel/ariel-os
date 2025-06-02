@@ -17,7 +17,7 @@ mod picotool;
 #[cfg(feature = "wifi")]
 mod wifi;
 
-#[cfg(feature = "wifi-cyw43")]
+#[cfg(any(feature = "wifi-cyw43", feature = "ble"))]
 #[doc(hidden)]
 pub mod cyw43;
 
@@ -45,6 +45,10 @@ pub mod storage;
 #[cfg(feature = "usb")]
 #[doc(hidden)]
 pub mod usb;
+
+#[cfg(feature = "ble")]
+#[doc(hidden)]
+pub mod ble;
 
 #[doc(hidden)]
 pub use embassy_rp::OptionalPeripherals;
