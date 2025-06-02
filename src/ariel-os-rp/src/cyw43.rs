@@ -5,9 +5,11 @@
 mod rpi_pico_w;
 
 #[cfg(feature = "ble")]
-mod ble;
+use crate::ble;
 
 use ariel_os_debug::log::info;
+#[cfg(feature = "ble")]
+use bt_hci::controller::ExternalController;
 use cyw43::{Control, JoinOptions, Runner};
 use embassy_executor::Spawner;
 use embassy_rp::{
@@ -16,7 +18,6 @@ use embassy_rp::{
 };
 use rpi_pico_w::{CywSpi, DEFAULT_CLOCK_DIVIDER, Irqs};
 use static_cell::StaticCell;
-use trouble_host::prelude::ExternalController;
 
 pub type NetworkDevice = cyw43::NetDriver<'static>;
 
@@ -97,6 +98,7 @@ pub async fn device<'a, 'b: 'a>(
 pub async fn device<'a, 'b: 'a>(
     peripherals: &'a mut crate::OptionalPeripherals,
     spawner: &Spawner,
+    config: ariel_os_embassy_common::ble::Config,
 ) -> (embassy_net_driver_channel::Device<'b, 1514>, Control<'b>) {
     let pins = rpi_pico_w::take_pins(peripherals);
 
@@ -127,7 +129,8 @@ pub async fn device<'a, 'b: 'a>(
 
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let (net_device, bt_device, mut control, runner) =
-        cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw).await;
+        cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw)
+            .await;
 
     // this needs to be spawned here (before using `control`)
     spawner.spawn(wifi_cyw43_task(runner)).unwrap();
@@ -137,8 +140,10 @@ pub async fn device<'a, 'b: 'a>(
     let controller: ExternalController<_, 10> = ExternalController::new(bt_device);
     static HOST_RESOURCES: StaticCell<trouble_host::HostResources<1, 1, 27>> = StaticCell::new();
     let resources = HOST_RESOURCES.init(trouble_host::HostResources::new());
-    let stack = trouble_host::new(controller, resources);
-    ble::STACK.init(controller).unwrap();
+    let stack = trouble_host::new(controller, resources).set_random_address(config.address);
+    if ble::STACK.init(stack).is_err() {
+        panic!("error initializing OnceLock with BLE stack");
+    }
 
     // control
     //     .set_power_management(cyw43::PowerManagementMode::PowerSave)
