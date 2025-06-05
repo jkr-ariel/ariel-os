@@ -77,10 +77,7 @@ ble = [
   "dep:trouble-host",
   "dep:bt-hci",
   "dep:embassy-sync",
-  "dep:cyw43",
-  "dep:cyw43-pio",
-  "dep:embassy-net-driver-channel",
-  "dep:static_cell",
+  "wifi-cyw43",
   "cyw43/bluetooth",
 ]
 

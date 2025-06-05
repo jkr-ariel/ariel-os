@@ -5,7 +5,7 @@
 mod rpi_pico_w;
 
 #[cfg(feature = "ble")]
-mod ble;
+use crate::ble;
 
 use ariel_os_debug::log::info;
 use cyw43::{Control, JoinOptions, Runner};
@@ -14,9 +14,12 @@ use embassy_rp::{
     gpio::{Level, Output},
     pio::Pio,
 };
-use rpi_pico_w::{CywSpi, DEFAULT_CLOCK_DIVIDER, Irqs};
+use rpi_pico_w::{CywSpi, CLOCK_DIVIDER, Irqs};
 use static_cell::StaticCell;
-use trouble_host::prelude::ExternalController;
+#[cfg(feature = "ble")]
+use bt_hci::controller::ExternalController;
+#[cfg(feature = "ble")]
+use trouble_host::Address;
 
 pub type NetworkDevice = cyw43::NetDriver<'static>;
 
@@ -69,7 +72,7 @@ pub async fn device<'a, 'b: 'a>(
     let spi = CywSpi::new(
         &mut pio.common,
         pio.sm0,
-        DEFAULT_CLOCK_DIVIDER,
+        cyw43_pio::DEFAULT_CLOCK_DIVIDER,
         pio.irq0,
         cs,
         pins.dio,
@@ -98,6 +101,7 @@ pub async fn device<'a, 'b: 'a>(
     peripherals: &'a mut crate::OptionalPeripherals,
     spawner: &Spawner,
 ) -> (embassy_net_driver_channel::Device<'b, 1514>, Control<'b>) {
+    info!("start of device()");
     let pins = rpi_pico_w::take_pins(peripherals);
 
     let fw = include_bytes!("cyw43/firmware/43439A0.bin");
@@ -117,7 +121,7 @@ pub async fn device<'a, 'b: 'a>(
     let spi = CywSpi::new(
         &mut pio.common,
         pio.sm0,
-        DEFAULT_CLOCK_DIVIDER,
+        CLOCK_DIVIDER,
         pio.irq0,
         cs,
         pins.dio,
@@ -127,7 +131,8 @@ pub async fn device<'a, 'b: 'a>(
 
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let (net_device, bt_device, mut control, runner) =
-        cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw).await;
+        cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw)
+            .await;
 
     // this needs to be spawned here (before using `control`)
     spawner.spawn(wifi_cyw43_task(runner)).unwrap();
@@ -137,8 +142,13 @@ pub async fn device<'a, 'b: 'a>(
     let controller: ExternalController<_, 10> = ExternalController::new(bt_device);
     static HOST_RESOURCES: StaticCell<trouble_host::HostResources<1, 1, 27>> = StaticCell::new();
     let resources = HOST_RESOURCES.init(trouble_host::HostResources::new());
-    let stack = trouble_host::new(controller, resources);
-    ble::STACK.init(controller).unwrap();
+    // Using a fixed "random" address can be useful for testing. In real scenarios, one would
+    // use e.g. the MAC 6 byte array as the address (how to get that varies by the platform).
+    let addr: Address = Address::random([0xff, 0x8f, 0x1a, 0x05, 0xe4, 0xff]);
+    let stack = trouble_host::new(controller, resources).set_random_address(addr);
+    if ble::STACK.init(stack).is_err() {
+        panic!("error initializing OnceLock with BLE controller");
+    }
 
     // control
     //     .set_power_management(cyw43::PowerManagementMode::PowerSave)

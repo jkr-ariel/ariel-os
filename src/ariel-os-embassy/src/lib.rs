@@ -31,7 +31,7 @@ mod wifi;
 #[cfg(feature = "eth")]
 mod eth;
 
-use ariel_os_debug::log::debug;
+use ariel_os_debug::log::{debug,info};
 
 use linkme::distributed_slice;
 
@@ -184,6 +184,7 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
     let spawner = asynch::Spawner::for_current_executor().await;
     asynch::set_spawner(spawner.make_send());
 
+    info!("start of init_task()");
     debug!("ariel-os-embassy::init_task()");
 
     #[cfg(all(context = "stm32", feature = "external-interrupts"))]
@@ -221,9 +222,11 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
         task(spawner, &mut peripherals);
     }
 
-    #[cfg(all(feature = "ble", not(context = "rp")))]
+    #[cfg(feature = "ble")]
     {
         let config = ble::config();
+        // RP boards have their own way of setting up BLE
+        #[cfg(not(context = "rp"))]
         hal::ble::driver(ble_peripherals, &spawner, config);
     }
 
@@ -306,8 +309,9 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
         spawner.spawn(usb::usb_task(usb)).unwrap();
     }
 
-    #[cfg(all(feature = "wifi-cyw43", not(feature = "ble")))]
+    #[cfg(any(feature = "wifi-cyw43", feature = "ble"))]
     let (device, control) = {
+        info!("just before ble device()");
         let (net_device, control) = hal::cyw43::device(&mut peripherals, &spawner).await;
         (net_device, control)
     };

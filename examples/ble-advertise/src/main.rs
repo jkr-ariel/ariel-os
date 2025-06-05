@@ -2,8 +2,6 @@
 #![no_std]
 
 use ariel_os::debug::log::info;
-//use bt_hci::cmd::le::*;
-//use bt_hci::controller::ControllerCmdSync;
 use embassy_futures::join::join;
 use embassy_time::{Duration, Timer};
 
