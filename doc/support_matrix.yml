@@ -41,6 +41,9 @@ functionalities:
   - name: wifi
     title: Wi-Fi
     description:
+  - name: ble
+    title: Bluetooth Low Energy
+    description:
   - name: ethernet_over_usb
     title: Ethernet over USB
     description:
@@ -64,6 +67,7 @@ chips:
       logging: supported
       storage: not_currently_supported
       wifi: not_available
+      ble: not_currently_supported
       user_usb: not_available
       ethernet_over_usb: not_available
 
@@ -78,6 +82,7 @@ chips:
       logging: supported
       storage: not_currently_supported
       wifi: not_available
+      ble: supported
       user_usb: not_available
       ethernet_over_usb: not_available
 
@@ -92,6 +97,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: supported
 
   nrf52840:
     name: nRF52840
@@ -104,6 +110,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: supported
 
   nrf5340:
     name: nRF5340
@@ -116,6 +123,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: not_currently_supported
 
   nrf9151:
     name: nRF9151
@@ -131,6 +139,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: not_currently_supported
 
   nrf9160:
     name: nRF9160
@@ -146,6 +155,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: not_currently_supported
 
   rp2040:
     name: RP2040
@@ -158,6 +168,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: supported
 
   rp235xa:
     name: RP235xa
@@ -170,6 +181,7 @@ chips:
       logging: supported
       storage: supported
       wifi: not_available
+      ble: supported
 
   esp32c3:
     name: ESP32-C3
@@ -185,6 +197,7 @@ chips:
         status: supported_with_caveats
         comments:
           - not currently compatible with threading
+      ble: not_currently_supported
 
   esp32c6:
     name: ESP32-C6
@@ -200,6 +213,7 @@ chips:
         status: supported_with_caveats
         comments:
           - not currently compatible with threading
+      ble: not_currently_supported
 
   esp32s3:
     name: ESP32-S3
@@ -212,6 +226,7 @@ chips:
       logging: supported
       storage: not_currently_supported
       wifi: supported
+      ble: not_currently_supported
 
   stm32c031c6:
     name: STM32C031C6
@@ -363,6 +378,7 @@ boards:
     chip: nrf51822-xxaa
     tier: "3"
     support:
+      ble: not_currently_supported
 
   bbc-microbit-v2:
     name: BBC micro:bit V2
@@ -372,6 +388,7 @@ boards:
     support:
       user_usb: not_available
       ethernet_over_usb: not_available
+      ble: supported
 
   nordic-thingy-91-x-nrf9151:
     name: Nordic Thingy:91 X
@@ -382,6 +399,7 @@ boards:
       user_usb: not_available
       ethernet_over_usb: not_available
       wifi: not_currently_supported
+      ble: not_currently_supported
 
   nrf52dk:
     name: nRF52-DK
@@ -389,6 +407,7 @@ boards:
     chip: nrf52832
     tier: "2"
     support:
+      ble: supported
 
   nrf52840dk:
     name: nRF52840-DK
@@ -398,6 +417,7 @@ boards:
     support:
       user_usb: supported
       ethernet_over_usb: supported
+      ble: supported
 
   nrf5340dk:
     name: nRF5340-DK
@@ -407,6 +427,7 @@ boards:
     support:
       user_usb: supported
       ethernet_over_usb: supported
+      ble: not_currently_supported
 
   nrf9160dk-nrf9160:
     name: nRF9160-DK
@@ -416,6 +437,7 @@ boards:
     support:
       user_usb: not_available
       ethernet_over_usb: not_available
+      ble: not_currently_supported
 
   rpi-pico:
     name: Raspberry Pi Pico
@@ -434,6 +456,7 @@ boards:
     support:
       user_usb: supported
       wifi: supported
+      ble: supported
       ethernet_over_usb: supported
 
   rpi-pico2:
@@ -453,6 +476,7 @@ boards:
     support:
       user_usb: supported
       wifi: supported
+      ble: supported
       ethernet_over_usb: supported
 
   espressif-esp32-c3-lcdkit:
@@ -463,6 +487,7 @@ boards:
     support:
       user_usb: not_currently_supported
       ethernet_over_usb: not_currently_supported
+      ble: not_currently_supported
 
   espressif-esp32-c6-devkitc-1:
     name: Espressif ESP32-C6-DevKitC-1
@@ -472,6 +497,7 @@ boards:
     support:
       user_usb: not_currently_supported
       ethernet_over_usb: not_currently_supported
+      ble: not_currently_supported
 
   espressif-esp32-s3-devkitc-1:
     name: Espressif ESP32-S3-DevKitC-1
@@ -481,6 +507,7 @@ boards:
     support:
       user_usb: not_currently_supported
       ethernet_over_usb: not_currently_supported
+      ble: not_currently_supported
 
   st-b-l475e-iot01a:
     name: ST B-L475E-IOT01A
@@ -494,6 +521,7 @@ boards:
         status: not_currently_supported
         comments:
           - an external Wi-Fi module is present on the board
+      ble: not_currently_supported
       ethernet_over_usb: not_currently_supported
 
   st-nucleo-c031c6:
@@ -502,6 +530,7 @@ boards:
     chip: stm32c031c6
     tier: "1"
     support:
+      ble: not_available
 
   st-nucleo-f042k6:
     name: ST NUCLEO-F042K6
@@ -509,6 +538,7 @@ boards:
     chip: stm32f042k6
     tier: "3"
     support:
+      ble: not_available
 
   st-nucleo-f401re:
     name: ST NUCLEO-F401RE
@@ -518,6 +548,7 @@ boards:
     support:
       user_usb: not_available
       wifi: not_available
+      ble: not_available
       ethernet_over_usb: not_available
 
   st-nucleo-f411re:
@@ -528,6 +559,7 @@ boards:
     support:
       user_usb: not_available
       wifi: not_available
+      ble: not_available
       ethernet_over_usb: not_available
 
   st-nucleo-h755zi-q:
@@ -538,6 +570,7 @@ boards:
     support:
       user_usb: supported
       wifi: not_available
+      ble: not_available
       ethernet_over_usb: not_currently_supported
 
   st-nucleo-wb55:
@@ -548,6 +581,7 @@ boards:
     support:
       user_usb: supported
       wifi: not_available
+      ble: not_currently_supported
       ethernet_over_usb: supported
 
   st-nucleo-wba55:
@@ -556,6 +590,7 @@ boards:
     chip: stm32wba55cg
     tier: "3"
     support:
+      ble: not_currently_supported
 
   stm32u083c-dk:
     name: STM32U083C-DK
@@ -565,6 +600,7 @@ boards:
     support:
       user_usb: supported
       wifi: not_available
+      ble: not_available
       ethernet_over_usb:
         status: not_currently_supported
         comments:
