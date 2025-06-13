@@ -24,10 +24,13 @@ pub type NetworkDevice = cyw43::NetDriver<'static>;
 
 #[cfg(feature = "ble-cyw43")]
 const SLOTS: usize = 10;
+#[cfg(feature = "ble-cyw43")]
 // Max number of BLE connections supported.
 const CONNS: usize = 1;
+#[cfg(feature = "ble-cyw43")]
 // Max number of L2CAP channels supported (not including GATT).
 const CHANNELS: usize = 1;
+#[cfg(feature = "ble-cyw43")]
 // Safe default MTU value that should work everywhere.
 const MTU: usize = 27;
 
@@ -100,14 +103,18 @@ pub async fn device<'a, 'b: 'a>(
         cyw43::new(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw).await;
 
     #[cfg(feature = "ble-cyw43")]
-    let (net_device, bt_device, mut control, runner) =
-    cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw)
-    .await;
-    let controller: ExternalController<_, SLOTS> = ExternalController::new(bt_device);
-    static HOST_RESOURCES: StaticCell<trouble_host::HostResources<CONNS, CHANNELS, MTU>> = StaticCell::new();
-    let resources = HOST_RESOURCES.init(trouble_host::HostResources::new());
-    let stack = trouble_host::new(controller, resources).set_random_address(config.address);
-    let _ =  ble::STACK.init(stack);
+    let (net_device, mut control, runner) = {
+        let (net_device, bt_device, control, runner) =
+        cyw43::new_with_bluetooth(STATE.init_with(|| cyw43::State::new()), pwr, spi, fw, btfw)
+        .await;
+        let controller: ExternalController<_, SLOTS> = ExternalController::new(bt_device);
+        static HOST_RESOURCES: StaticCell<trouble_host::HostResources<CONNS, CHANNELS, MTU>> = StaticCell::new();
+        let resources = HOST_RESOURCES.init(trouble_host::HostResources::new());
+        let stack = trouble_host::new(controller, resources).set_random_address(config.address);
+        let _ =  ble::STACK.init(stack);
+
+        (net_device, control, runner)
+    };
 
     // control
     //     .set_power_management(cyw43::PowerManagementMode::PowerSave)
