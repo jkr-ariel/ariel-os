@@ -23,8 +23,11 @@ pub type NetworkDevice = cyw43::NetDriver<'static>;
 
 #[cfg(feature = "ble-cyw43")]
 const SLOTS: usize = 10;
+// Max number of BLE connections supported.
 const CONNS: usize = 1;
+// Max number of L2CAP channels supported (not including GATT).
 const CHANNELS: usize = 1;
+// Safe default MTU value that should work everywhere.
 const MTU: usize = 27;
 
 pub async fn join(mut control: cyw43::Control<'static>) {
