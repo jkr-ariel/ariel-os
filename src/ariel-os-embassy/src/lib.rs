@@ -232,12 +232,15 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
     let (device, control) = {
         let config = ble::config();
         #[cfg(not(context = "rp"))]
-        hal::ble::driver(ble_peripherals, &spawner, config);
+        hal::ble::driver(ble_peripherals, spawner, config);
         #[cfg(context = "rp")]
         let (device, control) = {
-            let (net_device, control) = hal::cyw43::device(&mut peripherals, &spawner, config).await;
+            let (net_device, control) =
+                hal::cyw43::device(&mut peripherals, &spawner, config).await;
+
             (net_device, control)
         };
+
         (device, control)
     };
     // Ugly way to silence unused variables warning when using Bluetooth but not
