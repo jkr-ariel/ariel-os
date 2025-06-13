@@ -73,15 +73,18 @@ storage = []
 usb = []
 
 ## Enables Bluetooth Low Energy support.
-ble = [
+ble = []
+
+ble-cyw43 = [
   "dep:trouble-host",
   "dep:bt-hci",
   "dep:embassy-sync",
   "wifi-cyw43",
   "cyw43/bluetooth",
+  "ble",
 ]
-ble-peripheral = ["ble"]
-ble-central = ["ble"]
+ble-peripheral = ["ble-cyw43"]
+ble-central = ["ble-cyw43"]
 
 ## Enables defmt support.
 defmt = ["dep:defmt", "embassy-rp/defmt"]
