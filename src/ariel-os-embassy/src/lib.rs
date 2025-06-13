@@ -241,12 +241,15 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
             (net_device, control)
         };
 
+        #[cfg(not(context = "rp"))]
+        let (device, control) = ((), ());
+
         (device, control)
     };
     // Ugly way to silence unused variables warning when using Bluetooth but not
     // wifi with RP boards.
-    #[cfg(all(feature = "ble", context = "rp", not(feature = "wifi-cyw43")))]
-    let (_, _) = (device, control);
+    #[cfg(all(feature = "ble", not(feature = "wifi-cyw43")))]
+    let ((), ()) = (device, control);
 
     #[cfg(feature = "usb")]
     let mut usb_builder = {
