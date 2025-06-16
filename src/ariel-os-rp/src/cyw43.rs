@@ -19,20 +19,18 @@ use bt_hci::controller::ExternalController;
 use cyw43::JoinOptions;
 
 #[cfg(feature = "ble-cyw43")]
-use crate::ble;
+use crate::ble::{self, SLOTS};
 
 pub type NetworkDevice = cyw43::NetDriver<'static>;
 
-#[cfg(feature = "ble-cyw43")]
-const SLOTS: usize = 10;
-#[cfg(feature = "ble-cyw43")]
 // Max number of BLE connections supported.
+#[cfg(feature = "ble-cyw43")]
 const CONNS: usize = 1;
-#[cfg(feature = "ble-cyw43")]
 // Max number of L2CAP channels supported (not including GATT).
-const CHANNELS: usize = 1;
 #[cfg(feature = "ble-cyw43")]
+const CHANNELS: usize = 1;
 // Safe default MTU value that should work everywhere.
+#[cfg(feature = "ble-cyw43")]
 const MTU: usize = 27;
 
 #[cfg(feature = "wifi")]
