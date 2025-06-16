@@ -12,6 +12,7 @@ use embassy_rp::{
 };
 use rpi_pico_w::{CywSpi, DEFAULT_CLOCK_DIVIDER, Irqs};
 use static_cell::StaticCell;
+
 #[cfg(feature = "ble-cyw43")]
 use bt_hci::controller::ExternalController;
 #[cfg(feature = "wifi")]
@@ -111,7 +112,7 @@ pub async fn device<'a, 'b: 'a>(
             StaticCell::new();
         let resources = HOST_RESOURCES.init(trouble_host::HostResources::new());
         let stack = trouble_host::new(controller, resources).set_random_address(config.address);
-        let _ =  ble::STACK.init(stack);
+        let _ = ble::STACK.init(stack);
 
         (net_device, control, runner)
     };
