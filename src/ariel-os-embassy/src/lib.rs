@@ -229,27 +229,9 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
     }
 
     #[cfg(feature = "ble")]
-    let (device, control) = {
-        let config = ble::config();
-        #[cfg(not(context = "rp"))]
-        hal::ble::driver(ble_peripherals, spawner, config);
-        #[cfg(context = "rp")]
-        let (device, control) = {
-            let (net_device, control) =
-                hal::cyw43::device(&mut peripherals, &spawner, config).await;
-
-            (net_device, control)
-        };
-
-        #[cfg(not(context = "rp"))]
-        let (device, control) = ((), ());
-
-        (device, control)
-    };
-    // Ugly way to silence unused variables warning when using Bluetooth but not
-    // wifi with RP boards.
-    #[cfg(all(feature = "ble", not(feature = "wifi-cyw43")))]
-    let ((), ()) = (device, control);
+    let config = ble::config();
+    #[cfg(all(feature = "ble", not(context = "rp")))]
+    hal::ble::driver(ble_peripherals, spawner, config);
 
     #[cfg(feature = "usb")]
     let mut usb_builder = {
@@ -330,6 +312,9 @@ async fn init_task(mut peripherals: hal::OptionalPeripherals) {
         spawner.spawn(usb::usb_task(usb)).unwrap();
     }
 
+    #[cfg(all(feature = "ble", context = "rp"))]
+    let (device, control) =
+        hal::cyw43::device(&mut peripherals, &spawner, config).await;
     #[cfg(all(feature = "wifi-cyw43", not(feature = "ble")))]
     let (device, control) = {
         let (net_device, control) = hal::cyw43::device(&mut peripherals, &spawner).await;
