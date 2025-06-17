@@ -177,6 +177,7 @@ jobs:
                 external-interrupts,
                 i2c,
                 spi,
+                ble-cyw43,
                 "
             -p ariel-os-rp
             --
