@@ -165,7 +165,7 @@ jobs:
             --
             --deny warnings
 
-      - run: echo 'RUSTFLAGS=--cfg context="rp" --cfg context="rp2040" --cfg context="rpi-pico-w"' >> $GITHUB_ENV
+      - run: echo 'RUSTFLAGS=--cfg context="cortex-m" --cfg context="rp" --cfg context="rp2040"' >> $GITHUB_ENV
       - name: clippy for RP
         uses: clechasseur/rs-clippy-check@v3
         with:
