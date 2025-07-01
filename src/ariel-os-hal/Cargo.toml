@@ -67,7 +67,12 @@ usb = [
   "ariel-os-stm32/usb",
 ]
 
-ble = ["dep:bt-hci", "dep:embedded-io", "dep:trouble-host"]
+ble = [
+  "dep:bt-hci",
+  "dep:embedded-io",
+  "dep:trouble-host",
+  "ariel-os-esp/ble-esp",
+]
 ble-peripheral = []
 ble-central = []
 
