@@ -7,6 +7,7 @@ subdirs:
   - alloc
   - benchmark
   - blinky
+  - ble-advertise
   - coap-client
   - coap-server
   - device-metadata
