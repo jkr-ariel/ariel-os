@@ -19,6 +19,7 @@ concurrency:
 jobs:
   check-labels:
     runs-on: ubuntu-24.04
+    if: github.event_name == 'workflow_dispatch'
     outputs:
       label: ${{ steps.get-pr-labels.outputs.result }}
     env:
