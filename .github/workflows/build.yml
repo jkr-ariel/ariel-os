@@ -86,7 +86,7 @@ jobs:
     needs: check-labels
     runs-on: ubuntu-24.04
     # Ignore the PR labels in nightly builds.
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.check-labels.outputs.label != 'ci-build:skip' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name != 'workflow_dispatch' || needs.check-labels.outputs.label != 'ci-build:skip' }}
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
