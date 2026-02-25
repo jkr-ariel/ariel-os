@@ -11,6 +11,15 @@ mod app_desc {
     esp_bootloader_esp_idf::esp_app_desc!();
 }
 
+#[cfg(any(feature = "ble-esp", feature = "wifi"))]
+mod radio;
+#[cfg(any(feature = "ble-esp", feature = "wifi"))]
+mod scheduler;
+#[cfg(any(feature = "ble-esp", feature = "wifi"))]
+mod semaphore;
+#[cfg(any(feature = "ble-esp", feature = "wifi"))]
+mod wait_queue;
+
 pub mod gpio;
 
 #[cfg(feature = "hwrng")]
