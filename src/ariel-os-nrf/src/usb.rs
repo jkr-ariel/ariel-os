@@ -1,4 +1,4 @@
-use ariel_os_debug::log::debug;
+use ariel_os_debug::log::{debug, info};
 use embassy_nrf::{
     Peri, pac, peripherals,
     usb::{Driver, vbus_detect::HardwareVbusDetect},
@@ -24,6 +24,7 @@ impl Peripherals {
 
 pub fn init() {
     debug!("nrf: enabling ext hfosc...");
+    info!("nrf: init");
     pac::CLOCK.tasks_hfclkstart().write_value(1);
     while pac::CLOCK.events_hfclkstarted().read() != 1 {}
 }
