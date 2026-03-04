@@ -295,7 +295,7 @@ jobs:
       # In the future, we'll want to check multiple binaries with multiple builders.
       - name: Upload example binary for size workflow
         if: github.event_name != 'schedule' && matrix.partition == '1/20'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        uses: actions/upload-artifact@bbbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
           name: example
           path: build/bin/nrf52840dk/blinky/blinky.elf
