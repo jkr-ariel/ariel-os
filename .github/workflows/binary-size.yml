@@ -9,7 +9,7 @@ on:
 permissions: {}
 
 jobs:
-  build:
+  check-size:
     # Only run this job if the Build workflow completed successfully.
     if: github.event.workflow_run.conclusion == 'success'
     permissions:
@@ -22,7 +22,7 @@ jobs:
       - name: Download example binary
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: example
+          name: blinky
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Get size of example binary
