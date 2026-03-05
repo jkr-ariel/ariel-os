@@ -297,7 +297,7 @@ jobs:
         if: github.event_name != 'schedule' && matrix.partition == '1/20'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: example
+          name: blinky
           path: build/bin/nrf52840dk/blinky/blinky.elf
 
   build-success:
