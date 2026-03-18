@@ -13,8 +13,6 @@ builders:
   - has_buttons
   - has_leds
   - has_usb_device_port
-- name: ai-c3
-  parent: esp32-c3-mini-1
 - name: bbc-microbit-v1
   parent: nrf51822-xxaa
   provides:
@@ -155,6 +153,11 @@ builders:
   provides:
   - has_buttons
   - has_leds
+- name: seeedstudio-xiao-nrf52840-plus
+  parent: nrf52840
+  provides:
+  - has_leds
+  - has_usb_device_port
 - name: st-b-l475e-iot01a
   parent: stm32l475vg
   provides:
@@ -177,6 +180,15 @@ builders:
 - name: st-nucleo-f042k6
   parent: stm32f042k6
   provides:
+  - has_leds
+  - has_swi
+  env:
+    CARGO_ENV:
+    - CONFIG_SWI=USART2
+- name: st-nucleo-f303re
+  parent: stm32f303re
+  provides:
+  - has_buttons
   - has_leds
   - has_swi
   env:
@@ -251,6 +263,16 @@ builders:
   env:
     CARGO_ENV:
     - CONFIG_SWI=USART2
+- name: st-nucleo-wba65ri
+  parent: stm32wba65ri
+  provides:
+  - has_buttons
+  - has_leds
+  - has_swi
+  - has_usb_device_port
+  env:
+    CARGO_ENV:
+    - CONFIG_SWI=USART1
 - name: st-steval-mkboxpro
   parent: stm32u585ai
   provides:

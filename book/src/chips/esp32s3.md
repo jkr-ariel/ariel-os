@@ -15,9 +15,9 @@
 |SPI Main Mode|<span title="needs testing">🚦</span>|
 |UART|<span title="supported">✅</span>|
 |User USB|<span title="supported">✅</span>|
-|Ethernet over USB|<span title="available in hardware, but not currently supported by Ariel OS">❌</span>|
+|Ethernet over USB|<span title="supported">✅</span>|
 |Wi-Fi|<span title="supported">✅</span>|
-|Bluetooth Low Energy|<span title="available in hardware, but not currently supported by Ariel OS">❌</span>|
+|Bluetooth Low Energy|<span title="supported">✅</span>|
 |Hardware Random Number Generator|<span title="supported">✅</span>|
 |Persistent Storage|<span title="available in hardware, but not currently supported by Ariel OS">❌</span>[^requires-partitioning-support]|
 
@@ -92,9 +92,9 @@ Boards using this chip.
 		  <td class="support-cell" title="needs testing">🚦</td>
 		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="supported">✅</td>
-		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
 		  <td class="support-cell" title="supported">✅</td>
-		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
+		  <td class="support-cell" title="supported">✅</td>
+		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
       </tr>
@@ -113,9 +113,9 @@ Boards using this chip.
 		  <td class="support-cell" title="needs testing">🚦</td>
 		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="not available on this piece of hardware">–</td>
-		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
+		  <td class="support-cell" title="not available on this piece of hardware">–</td>
 		  <td class="support-cell" title="supported">✅</td>
-		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
+		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="supported">✅</td>
 		  <td class="support-cell" title="available in hardware, but not currently supported by Ariel OS">❌</td>
       </tr>
@@ -161,7 +161,6 @@ dt, dd {
   display: inline;
 }
 </style>
-
 
 
 

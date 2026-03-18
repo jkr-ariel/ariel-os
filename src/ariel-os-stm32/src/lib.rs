@@ -2,6 +2,7 @@
 
 #![no_std]
 #![cfg_attr(nightly, feature(doc_cfg))]
+#![cfg_attr(feature = "rcc-config-override", expect(unsafe_code))]
 #![deny(missing_docs)]
 
 pub mod gpio;
@@ -68,15 +69,21 @@ static SHARED_DATA: MaybeUninit<SharedData> = MaybeUninit::uninit();
 pub static EXECUTOR: Executor = Executor::new();
 
 #[doc(hidden)]
-pub trait IntoPeripheral<'a, T: PeripheralType> {
+pub trait IntoPeripheral<'a, T: PeripheralType>: private::Sealed {
     fn into_hal_peripheral(self) -> Peri<'a, T>;
 }
+
+impl<T: PeripheralType> private::Sealed for Peri<'_, T> {}
 
 #[doc(hidden)]
 impl<'a, T: PeripheralType> IntoPeripheral<'a, T> for Peri<'a, T> {
     fn into_hal_peripheral(self) -> Peri<'a, T> {
         self
     }
+}
+
+mod private {
+    pub trait Sealed {}
 }
 
 #[doc(hidden)]
@@ -97,10 +104,20 @@ pub fn init() -> OptionalPeripherals {
 }
 
 fn board_config(config: &mut Config) {
-    config.rcc = rcc_config();
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "rcc-config-override")] {
+            unsafe extern "Rust" {
+                fn __ariel_os_rcc_config() -> embassy_stm32::rcc::Config;
+            }
+            config.rcc = unsafe { __ariel_os_rcc_config() };
+        } else {
+            config.rcc = rcc_config();
+        }
+    }
 }
 
 // TODO: find better place for this
+#[cfg_attr(feature = "rcc-config-override", expect(dead_code))]
 fn rcc_config() -> embassy_stm32::rcc::Config {
     #[allow(unused_mut, reason = "conditional compilation")]
     let mut rcc = embassy_stm32::rcc::Config::default();
@@ -166,6 +183,25 @@ fn rcc_config() -> embassy_stm32::rcc::Config {
             divr: Some(PllRDiv::DIV2), // sysclk 80Mhz (32 / 2 * 10 / 2)
         });
         rcc.mux.clk48sel = mux::Clk48sel::HSI48;
+    }
+
+    #[cfg(any(context = "stm32f303cb", context = "stm32f303re"))]
+    {
+        use embassy_stm32::rcc::*;
+
+        rcc.hse = Some(Hse {
+            freq: embassy_stm32::time::Hertz(8000000),
+            mode: HseMode::Oscillator,
+        });
+        rcc.pll = Some(Pll {
+            src: PllSource::HSE,
+            prediv: PllPreDiv::DIV1,
+            mul: PllMul::MUL9,
+        });
+        rcc.ahb_pre = AHBPrescaler::DIV1;
+        rcc.apb1_pre = APBPrescaler::DIV4;
+        rcc.apb2_pre = APBPrescaler::DIV2;
+        rcc.sys = Sysclk::PLL1_P; // 72 MHz (8 / 1 * 9)
     }
 
     #[cfg(context = "st-nucleo-f401re")]
@@ -365,6 +401,27 @@ fn rcc_config() -> embassy_stm32::rcc::Config {
         });
 
         rcc.sys = Sysclk::PLL1_R;
+    }
+
+    #[cfg(context = "st-nucleo-wba65ri")]
+    {
+        use embassy_stm32::rcc::*;
+
+        rcc.hse = Some(Hse {
+            prescaler: HsePrescaler::DIV1,
+        });
+        rcc.pll1 = Some(Pll {
+            source: PllSource::HSE,
+            prediv: PllPreDiv::DIV2,  // 32 / 2 = 16 MHz
+            mul: PllMul::MUL12,       // 16 * 12 = 192 MHz
+            divp: Some(PllDiv::DIV6), // 192 / 6 = 32 MHz (for SAI1)
+            divq: None,
+            divr: Some(PllDiv::DIV2), // 192 / 2 = 96 MHz (sysclk)
+            frac: None,
+        });
+        rcc.sys = Sysclk::PLL1_R;
+        rcc.voltage_scale = VoltageScale::RANGE1;
+        rcc.mux.otghssel = Otghssel::HSE; // USB OTG HS ref clock from HSE (32 MHz)
     }
 
     rcc

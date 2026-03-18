@@ -1,12 +1,6 @@
 #![expect(unsafe_code)]
 
-use embassy_nrf::{
-    interrupt, pac,
-    pac::{
-        NVMC_S, UICR_S,
-        uicr::vals::{Hfxocnt, Hfxosrc},
-    },
-};
+use embassy_nrf::interrupt;
 use nrf_modem::{ConnectionPreference, MemoryLayout, SystemMode};
 // need to make the symbols available so nrf_modem can link against them
 extern crate tinyrlibc as _;
@@ -24,43 +18,6 @@ fn IPC() {
 unsafe extern "C" {
     static _MODEM_start: u8;
     static _MODEM_length: u8;
-}
-
-// Workaround used in the nrf mdk: file system_nrf91.c , function SystemInit(), after `#if !defined(NRF_SKIP_UICR_HFXO_WORKAROUND)`
-// Use this until commit `3e2b23d2f453d10324896484f9d045d2821bd567` is included in the embassy-nrf version we use.
-fn uicr_hfxo_workaround() {
-    let uicr = embassy_nrf::pac::UICR_S;
-    let hfxocnt = uicr.hfxocnt().read().hfxocnt().to_bits();
-    let hfxosrc = uicr.hfxosrc().read().hfxosrc().to_bits();
-
-    if hfxocnt != 255 && hfxosrc != 1 {
-        return;
-    }
-
-    cortex_m::interrupt::free(|_| {
-        cortex_m::asm::dsb();
-        while !NVMC_S.ready().read().ready() {}
-
-        NVMC_S
-            .config()
-            .write(|w| w.set_wen(pac::nvmc::vals::Wen::WEN));
-        while !NVMC_S.ready().read().ready() {}
-
-        UICR_S.hfxosrc().write(|w| w.set_hfxosrc(Hfxosrc::TCXO));
-        cortex_m::asm::dsb();
-        while !NVMC_S.ready().read().ready() {}
-
-        UICR_S.hfxocnt().write(|w| w.set_hfxocnt(Hfxocnt(32)));
-        cortex_m::asm::dsb();
-        while !NVMC_S.ready().read().ready() {}
-
-        NVMC_S
-            .config()
-            .write(|w| w.set_wen(pac::nvmc::vals::Wen::REN));
-        while !NVMC_S.ready().read().ready() {}
-    });
-
-    cortex_m::peripheral::SCB::sys_reset();
 }
 
 #[doc(hidden)]
@@ -112,17 +69,7 @@ pub async fn driver() {
         ipc_start
     }
 
-    uicr_hfxo_workaround();
-
     let ipc_start = configure_modem_non_secure();
-
-    let system_mode = SystemMode {
-        lte_support: true,
-        lte_psm_support: true,
-        nbiot_support: false,
-        gnss_support: true,
-        preference: ConnectionPreference::None,
-    };
 
     // Set the base address for the IPC shared memory, use default sizes.
     let memory_layout = MemoryLayout {
@@ -130,12 +77,31 @@ pub async fn driver() {
         ..Default::default()
     };
 
-    #[cfg(feature = "executor-interrupt")]
-    nrf_modem::init_with_custom_layout(system_mode, memory_layout, crate::SWI.number() as u8)
-        .await
-        .unwrap();
-    #[cfg(not(feature = "executor-interrupt"))]
-    nrf_modem::init_with_custom_layout(system_mode, memory_layout)
-        .await
-        .unwrap();
+    if cfg!(feature = "radiocore-firmware-dect") {
+        // In DECT mode, more of what happens later is left to the application, so we just do the core
+        // initialization; the application then relies on that init to have been done before running
+        // any DECT-specific initialization.
+
+        #[cfg(feature = "executor-interrupt")]
+        nrf_modem::init_with_custom_layout_core(memory_layout, crate::SWI.number() as u8).unwrap();
+        #[cfg(not(feature = "executor-interrupt"))]
+        nrf_modem::init_with_custom_layout_core(memory_layout).unwrap();
+    } else {
+        let system_mode = SystemMode {
+            lte_support: true,
+            lte_psm_support: true,
+            nbiot_support: false,
+            gnss_support: true,
+            preference: ConnectionPreference::None,
+        };
+
+        #[cfg(feature = "executor-interrupt")]
+        nrf_modem::init_with_custom_layout(system_mode, memory_layout, crate::SWI.number() as u8)
+            .await
+            .unwrap();
+        #[cfg(not(feature = "executor-interrupt"))]
+        nrf_modem::init_with_custom_layout(system_mode, memory_layout)
+            .await
+            .unwrap();
+    }
 }

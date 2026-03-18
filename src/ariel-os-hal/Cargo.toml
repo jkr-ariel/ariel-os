@@ -74,7 +74,13 @@ spi = [
   "ariel-os-stm32/spi",
 ]
 
-time = ["ariel-os-esp/time"]
+## Enables a time driver, and functionality requiring `embassy-time`.
+time = [
+  "ariel-os-esp/time",
+  "ariel-os-nrf/time",
+  "ariel-os-rp/time",
+  "ariel-os-stm32/time",
+]
 
 uart = [
   "ariel-os-embassy-common/uart",
@@ -99,8 +105,17 @@ ble = [
   "ariel-os-nrf/ble",
 ]
 ble-cyw43 = ["ariel-os-rp/ble-cyw43", "ble"]
-ble-peripheral = ["ariel-os-nrf/ble-peripheral", "ariel-os-rp/ble-peripheral"]
-ble-central = ["ariel-os-nrf/ble-central", "ariel-os-rp/ble-central"]
+ble-esp = ["ariel-os-esp/ble-esp", "ble"]
+ble-peripheral = [
+  "ariel-os-esp/ble-peripheral",
+  "ariel-os-nrf/ble-peripheral",
+  "ariel-os-rp/ble-peripheral",
+]
+ble-central = [
+  "ariel-os-esp/ble-central",
+  "ariel-os-nrf/ble-central",
+  "ariel-os-rp/ble-central",
+]
 
 nrf91-modem = ["ariel-os-nrf/nrf91-modem"]
 
@@ -149,6 +164,8 @@ defmt = [
   "embedded-io?/defmt-03",
 ]
 log = ["ariel-os-esp/log"]
+
+rcc-config-override = ["ariel-os-stm32/rcc-config-override"]
 
 [lints]
 workspace = true

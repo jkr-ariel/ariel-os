@@ -7,7 +7,6 @@ pub fn main() {
     println!(
         "cargo::rustc-check-cfg=cfg(context, values(\"adafruit-feather-nrf52840-sense\"))"
     );
-    println!("cargo::rustc-check-cfg=cfg(context, values(\"ai-c3\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"bbc-microbit-v1\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"bbc-microbit-v2\"))");
     println!(
@@ -59,9 +58,13 @@ pub fn main() {
     println!(
         "cargo::rustc-check-cfg=cfg(context, values(\"seeedstudio-xiao-esp32c6\"))"
     );
+    println!(
+        "cargo::rustc-check-cfg=cfg(context, values(\"seeedstudio-xiao-nrf52840-plus\"))"
+    );
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-b-l475e-iot01a\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-c031c6\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-f042k6\"))");
+    println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-f303re\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-f401re\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-f411re\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-f767zi\"))");
@@ -69,6 +72,7 @@ pub fn main() {
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-h755zi-q\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-wb55\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-wba55\"))");
+    println!("cargo::rustc-check-cfg=cfg(context, values(\"st-nucleo-wba65ri\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"st-steval-mkboxpro\"))");
     println!("cargo::rustc-check-cfg=cfg(context, values(\"stm32u083c-dk\"))");
 }

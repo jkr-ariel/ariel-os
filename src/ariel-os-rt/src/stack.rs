@@ -1,4 +1,4 @@
-//! Stack usage helpers.
+//! Provides stack usage helpers.
 
 #![expect(unsafe_code)]
 #![expect(
@@ -22,7 +22,7 @@ const STACK_PAINT_IGNORE: usize = 0;
 #[cfg(context = "xtensa")]
 const STACK_PAINT_IGNORE: usize = 16;
 
-/// Struct representing the currently active stack.
+/// Represents the currently active stack.
 ///
 /// # Stack painting
 ///
@@ -40,6 +40,12 @@ const STACK_PAINT_IGNORE: usize = 16;
 /// In the current implementation, and assuming the stack data follows a uniform distribution, this
 /// is unlikely to result in an underestimation of more than one byte.
 ///
+/// # Note
+///
+/// On [native][native-book], the stack *modeled by this type* is currently empty, so its usage and
+/// free space will both be reported as zero.
+///
+/// [native-book]: https://ariel-os.github.io/ariel-os/dev/docs/book/native-target.html
 // # Note
 //
 // The machinery for stack painting has a couple of assumptions:
@@ -70,12 +76,12 @@ pub struct Stack {
 }
 
 impl Stack {
-    /// Gets a handle for the currently active stack.
+    /// Returns a handle for the currently active stack.
     ///
     /// # Panics
     ///
     /// Panics when the world is on fire (e.g., when the limits returned by
-    /// the architecture dependent code don't make sense).
+    /// the architecture-dependent code don't make sense).
     #[must_use]
     pub fn get() -> Self {
         let sp = sp();
@@ -115,14 +121,14 @@ impl Stack {
     /// Returns the amount of currently free stack space.
     #[must_use]
     #[inline(always)]
-    pub fn free(&self) -> usize {
-        self.size() - self.used()
+    pub fn current_free_space(&self) -> usize {
+        self.size() - self.current_usage()
     }
 
     /// Returns the amount of currently used stack space.
     #[must_use]
     #[inline(always)]
-    pub fn used(&self) -> usize {
+    pub fn current_usage(&self) -> usize {
         self.highest - (sp() - STACK_PAINT_IGNORE)
     }
 
@@ -130,7 +136,7 @@ impl Stack {
     ///
     /// This re-calculates and thus runs in `O(n)`!
     #[must_use]
-    pub fn free_min(&self) -> usize {
+    fn free_min(&self) -> usize {
         let mut free = 0usize;
         for pos in self.lowest..self.highest {
             // SAFETY: dereferencing ptr to valid memory, read only
@@ -145,14 +151,12 @@ impl Stack {
         free
     }
 
-    /// Returns the maximum stack space used since last repaint.
-    ///
-    /// Equivalent to `size() - free_min()`.
+    /// Returns the peak amount of stack used since last repaint.
     ///
     /// This re-calculates and thus runs in `O(n)`!
     #[must_use]
     #[inline(always)]
-    pub fn used_max(&self) -> usize {
+    pub fn peak_usage(&self) -> usize {
         self.size() - self.free_min()
     }
 
@@ -182,20 +186,28 @@ impl Stack {
             // current stack frame's stack pointer.
             // This does not prevent this from being interrupted by an ISR, in which case
             // the stack is dirtied again, but that doesn't cause any unsafety and just
-            // makes any following `used_max()` call include whatever the ISR wrote on this stack.
+            // makes any following `peak_usage()` call include whatever the ISR wrote on this stack.
             unsafe {
                 write_volatile(pos as *mut u8, STACK_PAINT_COLOR);
             }
         }
     }
 
-    /// Returns this [`Stack`]'s `lowest` address.
+    /// Returns the highest address of the underlying stack.
+    ///
+    /// **Note:** this is currently intended for debugging only.
+    /// The address may be off by one word, and no guarantees are provided regarding its value
+    /// across executions.
     #[must_use]
     pub fn highest(&self) -> usize {
         self.highest
     }
 
-    /// Returns this [`Stack`]'s `highest` address.
+    /// Returns the lowest address of the underlying stack.
+    ///
+    /// **Note:** this is currently intended for debugging only.
+    /// The address may be off by one word, and no guarantees are provided regarding its value
+    /// across executions.
     #[must_use]
     pub fn lowest(&self) -> usize {
         self.lowest

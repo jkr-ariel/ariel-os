@@ -1,3 +1,4 @@
+version: 0.2.0
 boards:
   stm32u083c-dk:
     chip: stm32u083mc
@@ -7,7 +8,14 @@ boards:
       swi: USART4_LPUART3
     leds:
       led0:
+        pin: PC13
+        color: green
+      led1:
         pin: PA5
+        color: blue
+      led2:
+        pin: PB2
+        color: red
     buttons:
       button0:
         pin: PC2

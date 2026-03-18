@@ -8,13 +8,13 @@ Overriding this default selection is possible by explicitly selecting the desire
 
 ## Network Link Selection
 
-Ariel OS currently supports two different networking links: Ethernet-over-USB (aka CDC-NCM) and Wi-Fi.
+Ariel OS currently supports two different networking links: USB CDC-NCM (i.e., Ethernet over USB) and Wi-Fi.
 Boards may support both of them, only one of them, or none of them. However, currently the network stack supports at most one interface.
 
 Which link layer is used for networking is selected at compile time,
 through [laze modules][laze-modules-book].
 
-- `usb-ethernet`: Selects Ethernet-over-USB.
+- `usb-ethernet`: Selects Ethernet over USB (currently using USB CDC-NCM).
 - `wifi-cyw43`: Selects Wi-Fi using the CYW43 chip along an RP2040 or RP235x MCU (e.g., on the Raspberry Pi Pico W or Pico 2 W).
 - `wifi-esp`: Selects Wi-Fi on an ESP32 MCU.
 
@@ -29,6 +29,9 @@ CONFIG_WIFI_NETWORK=<ssid> CONFIG_WIFI_PASSWORD=<pwd> laze build ...
 ## Using the Networking Link on the Device
 
 ### Network Configuration
+
+> [!IMPORTANT]
+> When selecting a `network-config-*` [laze module](./build-system.md#laze-modules), this module must be placed *before* the `network` laze module in the [`selects` array][enabling-laze-modules-book].
 
 #### IPv4
 
@@ -65,6 +68,11 @@ The configuration must be customized with the following environment variables:
 > [!NOTE]
 > Non-static IPv6 address allocation will be supported in the future.
 
+#### Custom Configuration Provider
+
+Instead of using DHCP or passing static configuration through environment variables it is also possible to use a custom configuration provider if needed.
+To do that, the `network-config-override` [laze module](./build-system.md#laze-modules) needs to be enabled, and the [`#[ariel_os::config]` attribute macro][config-attr-macro-rustdoc] can be used to provide the configuration.
+
 ### Support for Network Protocols
 
 Support for various network protocols can be enabled through [Cargo features listed in the documentation][rustdoc-homepage].
@@ -97,9 +105,9 @@ ip address show dev <interface>
 Replace `<interface>` with the name of the used network interface.
 To find out the name of your interface you can use a command such as `ip address`.
 
-### Ethernet-over-USB
+### Ethernet over USB
 
-For Ethernet-over-USB, ensure that, in addition to the USB cable used for flashing
+For Ethernet over USB, ensure that, in addition to the USB cable used for flashing
 and debugging, the *user* USB port is also connected to the host computer with
 a second cable.
 
@@ -109,3 +117,4 @@ a second cable.
 [embassy-net-reexport-rustdoc]: https://ariel-os.github.io/ariel-os/dev/docs/api/ariel_os/reexports/embassy_net/index.html
 [examples-dir-repo]: https://github.com/ariel-os/ariel-os/tree/main/examples
 [laze-modules-book]: ./build-system.md#laze-modules
+[enabling-laze-modules-book]: ./build-system.md#enabling-laze-modules-for-an-application

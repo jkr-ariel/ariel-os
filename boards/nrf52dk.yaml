@@ -1,3 +1,4 @@
+version: 0.2.0
 boards:
   nrf52dk:
     chip: nrf52832
@@ -20,18 +21,14 @@ boards:
 
     buttons:
       button0:
-        color: green
         pin: P0_13
         active: low
       button1:
-        color: green
         pin: P0_14
         active: low
       button2:
-        color: green
         pin: P0_15
         active: low
       button3:
-        color: green
         pin: P0_16
         active: low

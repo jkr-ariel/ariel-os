@@ -1,5 +1,6 @@
 # This file contains Ariel OS specific information needed by sbd-gen for
 # generating an Ariel OS BSP crate.
+version: 0.2.0
 ariel:
   # This list contains all currently supported chips. The names must correspond
   # to an Ariel OS laze context.
@@ -31,6 +32,8 @@ ariel:
     - rp2040
     - rp235xa
     - stm32c031c6
+    - stm32f303cb
+    - stm32f303re
     - stm32f042k6
     - stm32f401re
     - stm32f411re
@@ -42,4 +45,5 @@ ariel:
     - stm32u585ai
     - stm32wb55rg
     - stm32wba55cg
+    - stm32wba65ri
     - stm32wle5jc
