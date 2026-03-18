@@ -51,7 +51,8 @@ jobs:
         env:
           BUILD_RUNNER: ${{ vars.BUILD_RUNNER }}
         with:
-          script: | # zizmor: ignore[template-injection] input is always a commit SHA
+          result-encoding: string
+          script: |
             const commitId = "${{ steps.get-commit-id.outputs.commit_id }}";
             console.log(`Commit ID: ${commitId}`);
             const { data: { items } } = await github.rest.search.issuesAndPullRequests({
@@ -109,7 +110,7 @@ jobs:
     runs-on: ${{ needs.check-labels.outputs.runnerLabel }}
 
     # Ignore the PR labels in nightly builds.
-    if: ${{ github.event_name == 'schedule' || needs.check-labels.outputs.label != 'ci-build:skip' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name != 'workflow_dispatch' || needs.check-labels.outputs.label != 'ci-build:skip' }}
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
