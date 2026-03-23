@@ -51,7 +51,6 @@ jobs:
         env:
           BUILD_RUNNER: ${{ vars.BUILD_RUNNER }}
         with:
-          result-encoding: string
           script: |
             return { buildLabel: "ci-build:small", runnerLabel: "ubuntu-24.04" };
             const commitId = "${{ steps.get-commit-id.outputs.commit_id }}";
