@@ -359,7 +359,7 @@ jobs:
       - name: Get size of example binary
         if: steps.should-skip.outputs.result != 'true' && github.event_name != 'schedule' && matrix.partition == '1/12'
         id: size
-        run: echo binsize="$(~/.local/share/cargo/bin/rust-size build/bin/nrf52840dk/blinky/blinky.elf)" | tee -a "$GITHUB_OUTPUT"
+        run: sudo apt install llvm && echo binsize="$(llvm-size build/bin/nrf52840dk/blinky/blinky.elf)" | tee -a "$GITHUB_OUTPUT"
 
       - name: Comment binary size info on PR
         if: steps.should-skip.outputs.result != 'true' && github.event_name != 'schedule' && matrix.partition == '1/12'
