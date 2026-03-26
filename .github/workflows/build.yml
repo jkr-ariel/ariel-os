@@ -112,6 +112,9 @@ jobs:
     # Ignore the PR labels in nightly builds.
     if: ${{ github.event_name == 'schedule' || github.event_name != 'workflow_dispatch' || needs.check-labels.outputs.label != 'ci-build:skip' }}
 
+    permissions:
+      pull-requests: write
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # clang-sys and thus bindgen is sensitive to multiple installed versions
