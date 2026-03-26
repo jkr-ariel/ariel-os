@@ -362,9 +362,9 @@ jobs:
         run: |
           sudo apt install llvm
           {
-            echo binsize<<EOF
+            echo 'binsize<<EOF'
             llvm-size build/bin/nrf52840dk/cargo/thumbv7em-none-eabihf/release/blinky
-            echo EOF
+            echo 'EOF'
           } | tee -a "$GITHUB_OUTPUT"
 
       - name: Comment binary size info on PR
