@@ -52,6 +52,7 @@ jobs:
           BUILD_RUNNER: ${{ vars.BUILD_RUNNER }}
         with:
           script: | # zizmor: ignore[template-injection] input is always a commit SHA
+            return { buildLabel: "ci-build:small", runnerLabel: "ubuntu-24.04" };
             const commitId = "${{ steps.get-commit-id.outputs.commit_id }}";
             console.log(`Commit ID: ${commitId}`);
             const { data: { items } } = await github.rest.search.issuesAndPullRequests({
